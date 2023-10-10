@@ -106,7 +106,8 @@ int main ( )
 		Se env\ufffda mensaje al Servidor
 	-----------------------------------------------------------------------*/
     for(int i=0;i<3;i++){
-        printf("entro");
+		printf("entro\n");
+
 	int enviado = sendto (Socket_Cliente, buffer, sizeof(buffer), 0,
 			(struct sockaddr *) &Servidor, Longitud_Servidor);
    
@@ -115,22 +116,18 @@ int main ( )
 		printf("Error al solicitar el servicio\n");
 	}
      else{
-            salida = select(Socket_Cliente+1,&lectura,NULL,NULL,&timeout);
-	
-	if(salida == -1)
+            salida = select(Socket_Cliente + 1,&lectura,NULL,NULL,&timeout);
+			if(salida == -1)
 	{
 		printf("Se ha producido un error en select\n");
 	}
-     if(i==3)
+     else if(salida==0)
 	{
-        printf("Se ha agotado el tiempo\n");
-        exit(-1);	
+        printf("Se ha agotado el tiempo\n");	
     }
-    else{
-    
-    
-    
-   
+	
+	else{
+	
 		/*----------------------------------------------------------------------
 			Esperamos la respuesta del Servidor
 		----------------------------------------------------------------------- */ 
@@ -140,11 +137,16 @@ int main ( )
 			
    		if (recibido > 0){
       			printf ("%s\n", buffer);
-                i=4;
+				close(Socket_Cliente);
+				return 0;
+                
         }
-		
+	}
+	
+	
     }
-     }
+	
+	timeout.tv_sec = 5;
     }
 		
 	close(Socket_Cliente);
